@@ -105,3 +105,4 @@ const Lab5 = (app) => {
     });
 
 };
+export default Lab5;
