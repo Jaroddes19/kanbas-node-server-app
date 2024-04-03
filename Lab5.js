@@ -3,6 +3,33 @@ const assignment = {
     description: "Create a NodeJS server with ExpressJS",
     due: "2021-10-10", completed: false, score: 0,
 };
+
+const module = {
+    _id: "M101",
+    name: "Introduction to Web Development",
+    description: "Basic principles of web development and web technologies.",
+    course: "RS101",
+    lessons: [
+        {
+            _id: "L101",
+            name: "History of Web Development",
+            description: "A brief history of web development and internet evolution.",
+            module: "M101"
+        },
+        {
+            _id: "L102",
+            name: "HTML Fundamentals",
+            description: "Basic principles of HTML.",
+            module: "M101"
+        },
+        {
+            _id: "L103",
+            name: "CSS Basics",
+            description: "Overview of cascading style sheets (CSS).",
+            module: "M101"
+        }
+    ]
+};
 const todos = [
     { id: 1, title: "Task 1", completed: false },
     { id: 2, title: "Task 2", completed: true },
@@ -17,10 +44,42 @@ const Lab5 = (app) => {
     app.get("/a5/assignment/title", (req, res) => {
         res.json(assignment.title);
     });
+    app.get("/a5/assignment/score", (req, res) => {
+        res.json(assignment.title);
+    });
+    app.get("/a5/assignment/completed", (req, res) => {
+        res.json(assignment.title);
+    });
+    app.get("/a5/assignment/score/:newScore", (req, res) => {
+        const { newScore } = req.params;
+        assignment.score = newScore;
+        res.json(assignment);
+    });
+    app.get("/a5/assignment/completed/:newCompleted", (req, res) => {
+        const { newCompleted } = req.params;
+        assignment.completed = newCompleted;
+        res.json(assignment);
+    });
     app.get("/a5/assignment/title/:newTitle", (req, res) => {
         const { newTitle } = req.params;
         assignment.title = newTitle;
         res.json(assignment);
+    });
+    app.get("/a5/module", (req, res) => {
+        res.json(module);
+    });
+    app.get("/a5/module/name", (req, res) => {
+        res.json(module.name);
+    });
+    app.get("/a5/module/name/:newName", (req, res) => {
+        const { newName } = req.params;
+        module.name = newName;
+        res.json(module);
+    });
+    app.get("/a5/module/description/:newDescription", (req, res) => {
+        const { newDescription } = req.params;
+        module.name = newDescription;
+        res.json(module);
     });
 
     app.get("/a5/todos", (req, res) => {
@@ -73,11 +132,24 @@ const Lab5 = (app) => {
         todo.title = title;
         res.json(todos);
     });
+    app.get("/a5/todos/:id/description/:description", (req, res) => {
+        const { id, description } = req.params;
+        const todo = todos.find((t) => t.id === parseInt(id));
+        todo.description = description;
+        res.json(todos);
+    });
+    app.get("/a5/todos/:id/completed/:completed", (req, res) => {
+        const { id, completed } = req.params;
+        const todo = todos.find((t) => t.id === parseInt(id));
+        todo.completed = completed === "true" ? true : false;
+        res.json(todos);
+    });
 
 
     app.get("/a5/welcome", (req, res) => {
         res.send("Welcome to Assignment 5");
     });
+
     app.get("/a5/add/:a/:b", (req, res) => {
         const { a, b } = req.params;
         const sum = parseInt(a) + parseInt(b);
@@ -86,6 +158,16 @@ const Lab5 = (app) => {
     app.get("/a5/subtract/:a/:b", (req, res) => {
         const { a, b } = req.params;
         const sum = parseInt(a) - parseInt(b);
+        res.send(sum.toString());
+    });
+    app.get("/a5/multiply/:a/:b", (req, res) => {
+        const { a, b } = req.params;
+        const sum = parseInt(a) * parseInt(b);
+        res.send(sum.toString());
+    });
+    app.get("/a5/divide/:a/:b", (req, res) => {
+        const { a, b } = req.params;
+        const sum = parseInt(a) / parseInt(b);
         res.send(sum.toString());
     });
     app.get("/a5/calculator", (req, res) => {
@@ -97,6 +179,12 @@ const Lab5 = (app) => {
                 break;
             case "subtract":
                 result = parseInt(a) - parseInt(b);
+                break;
+            case "multiply":
+                result = parseInt(a) * parseInt(b);
+                break;
+            case "divide":
+                result = parseInt(a) / parseInt(b);
                 break;
             default:
                 result = "Invalid operation";
