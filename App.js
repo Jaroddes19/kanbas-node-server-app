@@ -13,7 +13,7 @@ mongoose.connect(CONNECTION_STRING);
 const app = express()
 app.use(cors({
     credentials: true,
-    origin: process.env.FRONTEND_URL,
+    origin: 'https://sprightly-paprenjak-e7b57f.netlify.app',
 }));
 const sessionOptions = {
     secret: process.env.SESSION_SECRET,
@@ -25,7 +25,7 @@ if (process.env.NODE_ENV !== "development") {
     sessionOptions.cookie = {
         sameSite: "none",
         secure: true,
-        domain: process.env.HTTP_SERVER_DOMAIN,
+        domain: 'https://kanbas-node-app-jarodd19-aff208db567b.herokuapp.com/',
     };
 }
 app.use(session(sessionOptions));
