@@ -1,7 +1,6 @@
 import * as dao from "./dao.js";
-let currentCourse = null;
 export default function CourseRoutes(app) {
-    const findAllCouses = async (req, res) => {
+    const findAllCourses = async (req, res) => {
         const { department } = req.query;
         if (department) {
             const courses = await dao.findUsersByDepartment(department);
@@ -12,28 +11,32 @@ export default function CourseRoutes(app) {
         res.json(courses);
     };
     const findCourseById = async (req, res) => {
-        const id = req.params.id;
-        const course = await dao.findCourseById(id);
+        const { courseId }= req.params;
+        const course = await dao.findCourseById(courseId);
         res.json(course);
     };
-    const createCourse = (req, res) => {
-        const course = { ...req.body, _id: Date.now().toString() };
-        res.json(course);
+    const createCourse = async (req, res) => {
+        const course = req.body;
+        delete course._id;
+        const newCourse = { ...course, id: Date.now().toString() };
+        const result = await dao.createCourse(newCourse);
+        res.json(result);
     };
     const updateCourse = async (req, res) => {
         const { courseId } = req.params;
+        console.log(courseId);
         const status = await dao.updateCourse(courseId, req.body);
-        currentCourse = await dao.findCourseById(courseId);
         res.json(status);
     };
     const deleteCourse = async (req, res) => {
+        console.log(req.params.courseId);
         const status = await dao.deleteCourse(req.params.courseId);
         res.json(status);
     };
 
-    app.get("/api/courses", findAllCouses);
-    app.get("/api/courses/:id", findCourseById);
+    app.get("/api/courses", findAllCourses);
+    app.get("/api/courses/:courseId", findCourseById);
     app.post("/api/courses", createCourse);
-    app.put("/api/courses/:id", updateCourse);
-    app.delete("/api/courses/:id", deleteCourse);
+    app.put("/api/courses/:courseId", updateCourse);
+    app.delete("/api/courses/:courseId", deleteCourse);
 }

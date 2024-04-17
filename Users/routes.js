@@ -2,8 +2,11 @@ import * as dao from "./dao.js";
 let currentUser = null;
 export default function UserRoutes(app) {
     const createUser = async (req, res) => {
-        const user = await dao.createUser(req.body);
-        res.json(user);
+        const user = req.body;
+        delete user._id;
+        // user = { ...user, _id: ObjectId() };
+        const result = await dao.createUser(user);
+        res.json(result);
     };
 
     const deleteUser = async (req, res) => {
@@ -28,19 +31,23 @@ export default function UserRoutes(app) {
     };
     const updateUser = async (req, res) => {
         const { userId } = req.params;
+        console.log(userId);
         const status = await dao.updateUser(userId, req.body);
         currentUser = await dao.findUserById(userId);
         res.json(status);
-    };
+      };
+    
     const signup = async (req, res) => {
         const user = await dao.findUserByUsername(req.body.username);
         if (user) {
             res.status(400).json(
                 { message: "Username already taken" });
         }
+        else{
         const currentUser = await dao.createUser(req.body);
         req.session["currentUser"] = currentUser;
         res.json(currentUser);
+        }
     };
 
     const signin = async (req, res) => {
@@ -48,6 +55,7 @@ export default function UserRoutes(app) {
         const currentUser = await dao.findUserByCredentials(username, password);
         if (currentUser) {
             req.session["currentUser"] = currentUser;
+            console.log(currentUser)
             res.json(currentUser);
         } else {
             res.sendStatus(401);
@@ -59,6 +67,11 @@ export default function UserRoutes(app) {
     };
 
     const profile = async (req, res) => {
+        const currentUser = req.session["currentUser"];
+        if (!currentUser) {
+            res.sendStatus(401);
+            return;
+        }
         res.json(currentUser);
     };
     app.post("/api/users", createUser);

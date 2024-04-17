@@ -1,6 +1,6 @@
 import courseModel from "./model.js";
 export const findAllCourses = () => courseModel.find();
-export const findCourseById = (id) => courseModel.findById(id);
+export const findCourseById = (id) => courseModel.find({id: id});
 export const findCoursesByDepartment = (department) =>
     courseModel.find({ department });
 export const createCourse = (course) => courseModel.create(course);
